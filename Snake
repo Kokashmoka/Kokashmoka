@@ -1,0 +1,78 @@
+from tkinter import *
+from random import *
+
+tk = Tk()
+tk.title("SNAKE")
+tk.attributes("-topmost", True)
+c = Canvas(tk, height=500, width=500, bg="black")
+c.pack()
+
+height = 500
+width = 500
+cell = 10
+snake_x = 24
+snake_y = 24
+apple_x = randint(0, 49)
+apple_y = randint(0, 49)
+snake_pos_x = 0
+snake_pos_y = 0
+snake_size = 5
+snake_coords = []
+id_item = 0
+apple_pos = []
+
+def paint_snake_item(snake_x, snake_y, cell):
+    global id_item
+    snake = c.create_rectangle(snake_x*cell, snake_y*cell,
+                       snake_x*cell+cell, snake_y*cell+cell,
+                       fill="yellow", outline="yellow")
+    id_item = id_item + 1
+    snake_coords.append([snake_x, snake_y, id_item])
+    print(snake_coords)
+
+def paint_apple(apple_x, apple_y, cell):
+    apple = c.create_rectangle(apple_x*cell, apple_y*cell,
+                       apple_x*cell+cell, apple_y*cell+cell,
+                       fill="red", outline='red')
+    apple_pos.append([apple_x, apple_y])
+    print(apple_pos)
+    
+def can_we_del_item():
+    if len(snake_coords) >= snake_size:
+        temp_item = snake_coords.pop(0)
+        c.delete(temp_item[2])
+        print(temp_item)
+        
+def snake_move(event):
+    global snake_x
+    global snake_y
+    global snake_pos_x
+    global snake_pos_y
+    if event.keysym == "Up":
+        snake_pos_x = 0
+        snake_pos_y = -1
+        can_we_del_item()
+    if event.keysym == "Down":
+        snake_pos_x = 0
+        snake_pos_y = 1
+        can_we_del_item()
+    if event.keysym == "Left":
+        snake_pos_x = -1
+        snake_pos_y = 0
+        can_we_del_item()
+    if event.keysym == "Right":
+        snake_pos_x = 1
+        snake_pos_y = 0
+        can_we_del_item()
+    snake_x = snake_x + snake_pos_x
+    snake_y = snake_y + snake_pos_y
+    paint_snake_item(snake_x, snake_y, cell)
+    #paint_apple(apple_x, apple_y, cell)
+
+paint_apple(apple_x, apple_y, cell)
+paint_snake_item(snake_x, snake_y, cell)
+
+c.bind_all('<KeyPress-Up>', snake_move)
+c.bind_all('<KeyPress-Down>', snake_move)
+c.bind_all('<KeyPress-Left>', snake_move)
+c.bind_all('<KeyPress-Right>', snake_move)
